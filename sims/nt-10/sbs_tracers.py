@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import numpy as np
 import hoomd, hoomd.deprecated, hoomd.md
-import mybiotools as mbt
+import sbs_tracers_analysis as sbs
 import sys
 
 # check for proper invocation
@@ -12,29 +12,6 @@ if len(sys.argv) < 6 :
 
 # initialize hoomd-blue
 hoomd.context.initialize()
-
-def particle_images(sim,frame_id) :
-    """
-    Get the image index of all particles in simulation, at the frame 'frame_id'
-    """
-    # get positions of all particles: define first the atom selection, then jump to
-    # the user-requested trajectory frame, get the box dimensions (currently works
-    # only for orthorhombic boxes, then calculate the image indices
-    atoms = sim.u.select_atoms ('all')
-    ts = sim.u.trajectory[frame_id]
-    L = ts.dimensions[:3]
-    pos = atoms.positions + L/2.
-    return pos//L
-
-def restore_images (images,system) :
-    """
-    Restore the images into the system defined by "system"
-    """
-    # get information on the image indices of each particle from the images file
-    snapshot = system.take_snapshot()
-    for i,im in enumerate (images) :
-        snapshot.particles.image[i] = list (im)
-    system.restore_snapshot (snapshot)
 
 ###############################
 # parameters to vary
@@ -69,12 +46,8 @@ r_cut = 3.0              # LJ interaction cutoff distance
 # general parameters
 ###############################
 name = "sbs_tracers-phi-%.2f-e-%.1f-%d"%(phi,e,sim)
-xml_freq = 10000
-dcd_freq = 10000
-run_xml = "%s.xml"%name
-run_dcd = "%s.dcd"%name
-run_images = "%s-images.dat"%name
-init_xml = "%s-init.xml"%name
+gsd_freq = 10000
+run_gsd = "%s.gsd"%name
 
 ###############################
 # simulation parameters
@@ -116,12 +89,12 @@ tracers = dict(bond_len=b_polymer, type=['t'],
 # system init
 ###############################
 # check if trajectory file exists
-if os.path.exists(run_dcd) :
+if os.path.exists(run_gsd) :
     # if so, restore the system from last step of the simulation
-    system = hoomd.deprecated.init.read_xml(run_xml)
-    sim = mbt.hoomdsim(run_xml,run_dcd)
-    run_images = particle_images(sim,-1)
-    restore_images(run_images,system)
+    import gsd.hoomd
+    t = gsd.hoomd.open(name=run_gsd,mode='rb')
+    fn = len(t)-1
+    system = hoomd.init.read_gsd(filename=run_gsd,frame=fn)
 else :
     hoomd.deprecated.init.create_random_polymers(box=box, polymers=[polymer1,factors,tracers],
                                 separation=dict(p=sep,
@@ -157,9 +130,8 @@ lj.pair_coeff.set('t', 't', epsilon=e_repulsion, sigma=sigma, alpha=0.0)
 
 # trajectory output
 all = hoomd.group.all()
-xml = hoomd.deprecated.dump.xml(all,filename=run_xml, vis=True, period=xml_freq, restart=True,
+hoomd.dump.gsd(filename=run_gsd, period=gsd_freq, group=hoomd.group.all(),
                phase=0)
-dcd = hoomd.dump.dcd(filename=run_dcd, period=dcd_freq, unwrap_full=True, phase=0)
 
 ###############################
 # RUN!
