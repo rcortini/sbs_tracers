@@ -1,6 +1,14 @@
+from __future__ import print_function
 import os
 import numpy as np
 import hoomd, hoomd.deprecated, hoomd.md
+import mybiotools as mbt
+import sys
+
+# check for proper invocation
+if len(sys.argv) < 6 :
+    print("python sbs_tracers.py <phi> <e> <n> <init_seed> <integrate_seed>")
+    sys.exit(1)
 
 # initialize hoomd-blue
 hoomd.context.initialize()
@@ -18,9 +26,11 @@ def particle_images(sim,frame_id) :
     pos = atoms.positions + L/2.
     return pos//L
 
-def restore_images (images_file,system) :
+def restore_images (images,system) :
+    """
+    Restore the images into the system defined by "system"
+    """
     # get information on the image indices of each particle from the images file
-    images = np.loadtxt (images_file)
     snapshot = system.take_snapshot()
     for i,im in enumerate (images) :
         snapshot.particles.image[i] = list (im)
@@ -30,14 +40,14 @@ def restore_images (images_file,system) :
 # parameters to vary
 ###############################
 # concentration of binding sites
-phi = @PHI@
+phi = float(sys.argv[1])
 # tracer-to-polymer affinity (kT)
-e = @E@
-# random number generator seeds
-init_seed = @INIT_SEED@
-integrate_seed = @INTEGRATE_SEED@
+e = float(sys.argv[2])
 # simulation replicate number
-sim = @SIM@
+sim = int(sys.argv[3])
+# random number generator seeds
+init_seed = int(sys.argv[4])
+integrate_seed = int(sys.argv[5])
 
 ###############################
 # physical parameters
@@ -109,15 +119,15 @@ tracers = dict(bond_len=b_polymer, type=['t'],
 if os.path.exists(run_dcd) :
     # if so, restore the system from last step of the simulation
     system = hoomd.deprecated.init.read_xml(run_xml)
-    sim = mbt.load_sim(run_xml,run_dcd)
+    sim = mbt.hoomdsim(run_xml,run_dcd)
     run_images = particle_images(sim,-1)
     restore_images(run_images,system)
 else :
     hoomd.deprecated.init.create_random_polymers(box=box, polymers=[polymer1,factors,tracers],
-                                separation=dict(A=sep,
-                                                B=sep,
-                                                C=sep,
-                                                D=sep), seed=init_seed)
+                                separation=dict(p=sep,
+                                                a=sep,
+                                                b=sep,
+                                                t=sep), seed=init_seed)
 
 # polymer bonds
 harmonic = hoomd.md.bond.harmonic()
