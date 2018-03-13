@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import numpy as np
-import hoomd, hoomd.md
+import hoomd, hoomd.deprecated, hoomd.md
 import sbs_tracers_analysis as sbs
 import sys
 
