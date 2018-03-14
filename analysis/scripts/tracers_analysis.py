@@ -13,32 +13,12 @@ def print_usage () :
     print "--p_threshold     <2.0>                 threshold for polymer contacts"
     print "--teq             <5000>                equilibration time"
     print "--tsample         <50>                  sampling time"
-    print "--DKL_t_out       <DKL_t>               DKL_t output file name"
-    print "--hic_out         <hic>                 Hic output file name"
-    print "--chipseq_out     <chipseq>             Chipseq output file name"
-    print "--coverage_out    <coverage>            Coverage output file name"
     print "--polymer_text    <name A or name B>    string defining polymer"
     print "--tracer_text     <name D>              string defining tracers"
     print 
 
 # get parameters from the command line
 parser = optparse.OptionParser()
-parser.add_option('-D', '--DKL_t_out', 
-                  dest="DKL_t_out", 
-                  default="DKL_t",
-                  )
-parser.add_option('-H', '--hic_out', 
-                  dest="hic_out", 
-                  default="hic",
-                  )
-parser.add_option('-C', '--chipseq_out', 
-                  dest="chipseq_out", 
-                  default="chipseq",
-                  )
-parser.add_option('-c', '--coverage_out', 
-                  dest="coverage_out", 
-                  default="coverage",
-                  )
 parser.add_option('-p', '--polymer_text', 
                   dest="polymer_text", 
                   default="type p or type a",
@@ -112,9 +92,22 @@ DKL_t,H,C,coverage = sbs.tracers_analysis (sim,
                     t_threshold,
                     p_threshold)
 
+# additional calculations
+
+# p(s)
+ps = sbs.ps(H)
+
+# KL divergence
+DKL = DKL_t[-1]
+
+# Pearson correlation between polymer contacts and traffic
+r = np.corrcoef(H.sum(axis=1),C)[0,1]
+
 # save files
 sbs.log_message(program_name, "Done. Saving files")
-np.save(options.DKL_t_out,DKL_t)
-np.save(options.hic_out,H)
-np.save(options.chipseq_out,C)
-np.save(options.coverage_out,coverage)
+np.save('DKL_t.npy',DKL_t)
+np.save('polymer_contacts.npy',H)
+np.save('traffic.npy',C)
+np.save('coverage.npy',coverage)
+np.save('ps.npy',ps)
+np.save('r.npy',r)

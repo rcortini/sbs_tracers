@@ -57,6 +57,15 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
     coverage = C.sum(axis=0).astype('float')/N
     return DKL_t,H,Ct.astype(np.int64),coverage
 
+def ps(H) :
+    """
+    Calculate the normalized probability of contact between a monomer and all
+    others as a function of the linear distance s.
+    """
+    p = np.array ([np.mean(np.diagonal(H, offset=k))
+                   for k in range(H.shape[0])])
+    return p/np.sum(p)
+
 def msd_t(sim,particles_text,teq,tsample) :
     """
     Calculate the mean square displacement of the particles defined by
@@ -67,7 +76,6 @@ def msd_t(sim,particles_text,teq,tsample) :
 
     This calculation is detailed in Qian, H., M. P. Sheetz, and E. L. Elson. 1991.
     ``Single Particle Tracking. Analysis of Diffusion and Flow in
-    Two-Dimensional Systems.” Biophysical Journal 60 (4):910–21.
     """
     u = sim.u
     particles = u.select_atoms(particles_text)
