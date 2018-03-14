@@ -56,3 +56,38 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
     C[C>1] = 1
     coverage = C.sum(axis=0).astype('float')/N
     return DKL_t,H,Ct.astype(np.int64),coverage
+
+def msd_t(sim,particles_text,teq,tsample) :
+    """
+    Calculate the mean square displacement of the particles defined by
+    'particles_text' in simulation `sim`, using sampling `tsample` and equilibration
+    time `teq`. Returns the matrix corresponding to the mean square displacement
+    of each particle, along with a matrix corresponding to the variance in the
+    estimate of this quantity.
+
+    This calculation is detailed in Qian, H., M. P. Sheetz, and E. L. Elson. 1991.
+    ``Single Particle Tracking. Analysis of Diffusion and Flow in
+    Two-Dimensional Systems.” Biophysical Journal 60 (4):910–21.
+    """
+    u = sim.u
+    particles = u.select_atoms(particles_text)
+    nparticles = particles.n_atoms
+    nslice = traj_nslice (u,teq,tsample)
+    # initialize the matrix containing all the positions
+    # of the particles at all the sampling frames
+    particles_pos = np.zeros ((nslice,nparticles,3))
+    for i,ts in enumerate(u.trajectory[teq::tsample]) :
+        particles_pos[i,:,:] = particles.positions
+    # now initialize the Delta matrix, which contains the
+    # squared differences between the particles' positions
+    # at different time delays
+    Nt = int(nslice/2)
+    Delta = np.zeros((nparticles,Nt,Nt))
+    for delay in xrange(1,Nt+1) :
+        for t0 in xrange (Nt) :
+            t1 = t0 + delay
+            pos1 = particles_pos[t1,:,:]
+            pos0 = particles_pos[t0,:,:]
+            Delta[:,delay-1,t0] = np.sum((pos1-pos0)**2,axis=1)
+    # return the matrices of MSD and its variance
+    return np.mean(Delta,axis=2),np.var(Delta,axis=2)
