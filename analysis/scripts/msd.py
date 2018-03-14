@@ -10,16 +10,11 @@ def print_usage () :
     print "OPTIONS:"
     print "--teq          <1000>                equilibration time"
     print "--tsample      <1>                   sampling time"
-    print "--msd_out      <msd>                 Hi-C output file name"
     print "--tracer_text  <name t>              string defining tracers"
     print 
 
 # get parameters from the command line
 parser = optparse.OptionParser()
-parser.add_option('-m', '--msd_out', 
-                  dest="msd_out", 
-                  default="msd",
-                  )
 parser.add_option('-t', '--tracer_text', 
                   dest="tracer_text", 
                   default="name t",
@@ -39,17 +34,21 @@ options, remainder = parser.parse_args()
 try :
     gsd = remainder[0]
 except IndexError :
-    mbt.error_message(program_name, "Incorrect usage")
+    sbs.error_message(program_name, "Incorrect usage")
     print_usage()
     sys.exit (1)
 
 # init the HOOMD simulation instance from mybiotools
-sim = mbt.hoomdsim(gsd)
+sim = sbs.hoomdsim(gsd)
 
 # go for the calculation of the MSD
-mbt.log_message(program_name, "Calculating MSD")
-sbs.msd_t(sim, options.tracer_text, options.teq, options.tsample)
+sbs.log_message(program_name, "Calculating MSD")
+msd = sbs.msd_t(sim, options.tracer_text, options.teq, options.tsample)
+
+# perform the gradient of the MSD
+dinst = np.gradient(msd,axis=1) / 6.0
 
 # save files
-mbt.log_message(program_name, "Done. Saving file")
-np.save(options.msd_out,sim.msd_t)
+sbs.log_message(program_name, "Done. Saving file")
+np.save('msd.npy', msd)
+np.save('dinst.npy', dinst)
