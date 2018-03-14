@@ -17,10 +17,18 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
     It calculates the polymer contact matrix, traffic of tracers, Kullback-Leibler
     divergence between the two profiles as a function of time, and coverage of
     the tracers.
+    
+    "sim" is the "hoomdsim" class defined in core.
 
     User should supply "polymer_text" and "tracer_text", which define the
     polymer particles and tracer particles. Typically polymer_text is "type p or
     type a", and tracer_text is "type t".
+
+    Sampling is done starting from time `teq`, and every `tsample` time steps.
+
+    The threshold for the definition of contacts between the tracers and the
+    polymer is `t_threshold`. The one between the polymer monomers is
+    `p_threshold`.
     """
     # define DKL(t) vector
     nframes = traj_nslice(sim.u,teq,tsample)
@@ -39,7 +47,7 @@ def tracers_analysis (sim,polymer_text,tracer_text,teq,tsample,t_threshold,p_thr
         d = distance_array(polymer.positions,polymer.positions,box=ts.dimensions)
         H += (d<p_threshold)
         Rt = H.sum(axis=1)
-        # calculate ChIP-seq at this time frame
+        # calculate traffic at this time frame
         c = distance_array(polymer.positions,tracers.positions,box=ts.dimensions)
         C += (c<t_threshold)
         Ct = C.sum(axis=1)
