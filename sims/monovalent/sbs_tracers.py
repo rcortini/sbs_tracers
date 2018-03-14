@@ -168,7 +168,7 @@ lj.pair_coeff.set('t1', 't1', epsilon=e_repulsion, sigma=sigmat1_interaction, al
 hoomd.dump.gsd(filename=run_gsd, period=gsd_freq, 
                group=hoomd.group.all(),phase=0)
 
-# define which particles to integrate: all of them except the P particles
+# define which particles to integrate: all of them except the t1 particles
 p_group = hoomd.group.type('p')
 a_group = hoomd.group.type('a')
 b_group = hoomd.group.type('b')
