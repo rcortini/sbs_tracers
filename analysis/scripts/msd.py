@@ -1,5 +1,5 @@
 import numpy as np
-import mybiotools as mbt
+import sbs_tracers_analysis as sbs
 import os, sys, optparse
 
 program_name = "msd"
@@ -48,9 +48,7 @@ sim = mbt.hoomdsim(gsd)
 
 # go for the calculation of the MSD
 mbt.log_message(program_name, "Calculating MSD")
-sim.calculate_tracer_msd(options.tracer_text,
-                         options.teq,
-                         options.tsample)
+sbs.msd_t(sim, options.tracer_text, options.teq, options.tsample)
 
 # save files
 mbt.log_message(program_name, "Done. Saving file")
