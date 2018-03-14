@@ -130,8 +130,8 @@ lj.pair_coeff.set('t', 't', epsilon=e_repulsion, sigma=sigma, alpha=0.0)
 
 # trajectory output
 all = hoomd.group.all()
-hoomd.dump.gsd(filename=run_gsd, period=gsd_freq, group=hoomd.group.all(),
-               phase=0)
+hoomd.dump.gsd(filename=run_gsd, period=gsd_freq, 
+               group=hoomd.group.all(),phase=0)
 
 ###############################
 # RUN!
