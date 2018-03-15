@@ -56,3 +56,38 @@ See above for the `teq` and `tsample` options.
 - `t_threshold`: the threshold to determine whether a tracer is in contact with
   the polymer or not.
 - `threshold`: supply this option if you want the thresholds above to be equal.
+- `polymer_text`: text that MDAnalysis' `Universe` accepts to define the
+  particles that compose the polymer. Defaults to `type p or type a`.
+- `tracer_text`: text that MDAnalysis' `Universe` accepts to define the
+  tracers. Defaults to `type t`.
+
+## msd.py
+This script perform the analysis of the Mean Square Displacement (MSD) of the
+tracers in the simulation. The calculation is done as detailed in the paper
+
+Qian, H., M. P. Sheetz, and E. L. Elson. 1991.[Single Particle Tracking.
+Analysis of Diffusion and Flow in Two-dimensional
+Systems](https://dx.doi.org/10.1016%2FS0006-3495%2891%2982125-7) Biophysical
+Journal, 1991
+
+Outputs the two files:
+- `msd.npy`: contains an array of shape (2, `ntracers`, `nframes/2`). In the
+  first array (`msd[0,:,:]`) there is the MSD as a function of time delay for each 
+  of the tracers in the system. In the second array (`msd[1,:,:]`) there is the
+  standard deviation of the estimate of the MSD.
+- `dinst.npy`: contains an array of shape (`ntracers`, `nframes/2`) containing
+  the estimate of the instantaneous diffusion coefficient of each of the tracers
+  at each time delay value.
+
+### Invocation
+
+```
+python msd.py trajectory [options...]
+```
+
+### Options
+
+Apart from the `teq` and `tsample` options (see above), there is:
+
+- `tracer_text`: text that MDAnalysis' `Universe` accepts to define the
+  tracers. Defaults to `type t`.
