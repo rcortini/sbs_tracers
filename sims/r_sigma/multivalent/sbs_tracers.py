@@ -7,7 +7,7 @@ import sys
 
 # check for proper invocation
 if len(sys.argv) < 6 :
-    print("python sbs_tracers.py <phi> <e> <n> <init_seed> <integrate_seed>")
+    print("python sbs_tracers.py <phi> <e> <sigma> <init_seed> <integrate_seed>")
     sys.exit(1)
 
 # initialize hoomd-blue
@@ -40,12 +40,7 @@ k = 330.0                # polymer stiffness constant
 sigma = 1.0              # particle diameter, local units
 e_repulsion = 1.0        # repulsion LJ epsilon
 e_attraction = 10.0      # binder-to-binding sites affinity (kT)
-r_cut = 2.5*sigma        # LJ interaction cutoff distance
-
-# geometry of the composite particles
-delta = 0.15             # how much the small D1 particles emerge from D
-sigmat1 = 0.5            # diameter of D1 particles
-dt1 = delta - sigmat1/2. + sigmat/2.
+r_cut = 2.5*sigmat       # LJ interaction cutoff distance
 
 ###############################
 # general parameters
