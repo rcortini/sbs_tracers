@@ -4,7 +4,7 @@
 This package contains the Python scripts to run and analyze the simulations that
 were presented in the paper
 
-["Theoretical principles of transcription factor
+R. Cortini and G. Filion ["Theoretical principles of transcription factor
 traffic on folded chromatin"](https://doi.org/10.1101/164541).
 
 # Table of contents
@@ -97,3 +97,5 @@ from a shell like follows:
 ```
 python script.py trajectory.gsd <options>
 ```
+See the README in that folder for the description of each of the analysis
+scripts.
