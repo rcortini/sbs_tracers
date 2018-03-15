@@ -7,7 +7,7 @@ import sys
 
 # check for proper invocation
 if len(sys.argv) < 6 :
-    print("python sbs_tracers.py <phi> <e> <n> <init_seed> <integrate_seed>")
+    print("python sbs_tracers.py <phi> <e> <sigma> <init_seed> <integrate_seed>")
     sys.exit(1)
 
 # initialize hoomd-blue
