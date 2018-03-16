@@ -48,6 +48,8 @@ all, clone the repository to your local machine. From a shell:
 cd /path/to/download
 git clone https://github.com/rcortini/sbs_tracers
 ```
+Alternatively, you can also download the repository as a zip file clicking the
+green button in the top right of this page.
 
 ### Requirements
 
