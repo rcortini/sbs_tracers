@@ -22,14 +22,16 @@ The code presented here is organized in two main subdirectories: `sims` and
 
 The **sims** folder contains several subdirectories:
 
-1. `monovalent`: code for simulating monovalent tracers
-2. `multivalent`: code for simulating multivalent tracers
+1. `monovalent`: code for simulating monovalent tracers (Supplementary Note 4)
+2. `multivalent`: code for simulating multivalent tracers (Figures 2, 3, 4, 5 of
+   Main Text, Supplementary Notes 1, 2, 3, 7)
 3. `crowding`: code for simulating tracers in the presence of a crowded
-   environment
+   environment (Supplementary Note 6)
 4. `r_sigma`: code for simulating tracers with varying diameter, and comes in
    two flavors
     1. `monovalent`: the tracers are monovalent
     2. `multivalent`: the tracers are multivalent
+    Both are in Supplementary Note 5.
 
 The **analysis** folder contains two subdirectories:
 
@@ -40,7 +42,12 @@ The **analysis** folder contains two subdirectories:
 
 ## Environment setup
 
-First let's set up the environment to run and analyze the simulations.
+First let's set up the environment to run and analyze the simulations. First of
+all, clone the repository to your local machine. From a shell:
+```
+cd /path/to/download
+git clone https://github.com/rcortini/sbs_tracers
+```
 
 ### Requirements
 
@@ -74,14 +81,16 @@ shell. You are then ready to run the simulations and analyze them.
 
 ## Running a simulation
 The `sims` directory contains several subdirectories, each of which contains an
-`sbs_tracers.py` file. From a shell, run
+`sbs_tracers.py` file. From a shell, for example you could run
 ```
+cd /path/to/download/sims/multivalent
 python sbs_tracers.py <options>
 ```
-will run a simulation. The output will be a `.gsd` file, which contains both the
-topology and the trajectory of the simulated particles. The output file name
-will contain also the parameters passed to the script through the `<options>`.
-See the individual README files for the options to each of the simulation files.
+which will run a simulation. The output will be a `.gsd` file, which contains
+both the topology and the trajectory of the simulated particles. The output file
+name will contain also the parameters passed to the script through the
+`<options>`.  See the individual README files for the options to each of the
+simulation files.
 
 All the simulation files contain the options `init_seed` and `integrate_seed`,
 which are the seeds for the random number generator for initialization of the
